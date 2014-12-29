@@ -98,6 +98,16 @@ class BaseEventLoop(events.AbstractEventLoop):
         self._internal_fds = 0
 #        self._running = False
 
+    def create_task(self, coro):
+        """Schedule a coroutine object.
+
+        Return a task object.
+        """
+        task = tasks.Task(coro, loop=self)
+        if task._source_traceback:
+            del task._source_traceback[-1]
+        return task
+
     def _make_socket_transport(self, sock, protocol, waiter=None, *,
                                extra=None, server=None):
         """Create socket transport."""
@@ -664,3 +674,6 @@ class BaseEventLoop(events.AbstractEventLoop):
 #            if not handle._cancelled:
 #                handle._run()
 #        handle = None  # Needed to break cycles when an exception occurs.
+
+    def get_debug(self):
+        return False
